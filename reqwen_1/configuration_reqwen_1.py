@@ -107,6 +107,8 @@ class ReQwen_1TextConfig(PreTrainedConfig):
     base_config_key = "text_config"
     ignore_keys_at_rope_validation = {"mrope_section", "mrope_interleaved"}
 
+    max_iterations_per_layer = int | None = None
+
     def __post_init__(self, **kwargs):
         kwargs.setdefault("partial_rotary_factor", 0.25)  # assign default for BC
         if self.layer_types is None:
