@@ -773,6 +773,7 @@ class ReQwen_1RMSNorm(nn.Module):
 class ReQwen_1DecoderLayer(GradientCheckpointingLayer):
     def __init__(self, config: ReQwen_1TextConfig, layer_idx: int):
         super().__init__()
+        self.config = config
         self.hidden_size = config.hidden_size
         self.block_type = config.layer_types[layer_idx]
         if self.block_type == "linear_attention":
@@ -822,6 +823,8 @@ class ReQwen_1DecoderLayer(GradientCheckpointingLayer):
         residual = hidden_states
         hidden_states1 = self.post_attention_layernorm(hidden_states)
         hidden_states = self.mlp(hidden_states1)
+
+        # for _ in range(self.config.max_iterations_per_layer): # TODO: Implement later after testing.
         while not torch.sigmoid(self.verifier(hidden_states)).mean() > 0.5:
             hidden_states = self.mlp(hidden_states1 - hidden_states)
 
